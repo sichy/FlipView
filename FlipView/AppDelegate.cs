@@ -17,10 +17,11 @@ namespace FlipView
 		UIWindow window;
 		FlipViewViewController viewController;
 		
-		FlipView tickerView;
-		UIView frontView;
-		UIView backView;
-		UIButton flipButton;
+		FlipView flipView;
+		UIImageView frontView;
+		UIImageView backView;
+		UIButton flipButtonDown;
+		UIButton flipButtonUp;
 
 		//
 		// This method is invoked when the application has loaded and is ready to run. In this 
@@ -38,25 +39,34 @@ namespace FlipView
 			window.MakeKeyAndVisible ();
 			
 			// set the views there
-			frontView = new UIView (new RectangleF (0, 0, 300, 300));
-			frontView.BackgroundColor = UIColor.LightGray;
+			frontView = new UIImageView (new RectangleF (0, 0, 300, 226)); // make sure the height is even number, so it can easily make the half of it
+			frontView.Image = UIImage.FromFile ("galaxy1.png");
 			
-			backView = new UIView (new RectangleF (0, 0, 300, 300));
-			backView.BackgroundColor = UIColor.Gray;
+			backView = new UIImageView (new RectangleF (0, 0, 300, 226));
+			backView.Image = UIImage.FromFile ("galaxy2.png");
 			
-			tickerView = new FlipView (new RectangleF (10, 50, 300, 300));
-			tickerView.FrontView = frontView;
-			tickerView.BackView = backView;	
-			tickerView.Duration = 1;
+			flipView = new FlipView (new RectangleF (10, 128, 300, 226));
+			flipView.FrontView = frontView;
+			flipView.BackView = backView;	
+			flipView.Duration = 1;
 			
-			flipButton = new UIButton (new RectangleF (10, 10, 80, 40));
-			flipButton.SetTitle ("Flip", UIControlState.Normal);
-			flipButton.TouchUpInside += delegate {
-				tickerView.Flip (FlipDirection.Down, null);
+			flipButtonDown = UIButton.FromType (UIButtonType.RoundedRect);
+			flipButtonDown.Frame = new RectangleF (10, 10, 80, 40);
+			flipButtonDown.SetTitle ("Flip down", UIControlState.Normal);
+			flipButtonDown.TouchUpInside += delegate {
+				flipView.Flip (FlipDirection.Down, null);
 			};
 			
-			viewController.View.AddSubview (tickerView);
-			viewController.View.AddSubview (flipButton);
+			flipButtonUp = UIButton.FromType (UIButtonType.RoundedRect);
+			flipButtonUp.Frame = new RectangleF (100, 10, 80, 40);
+			flipButtonUp.SetTitle ("Flip up", UIControlState.Normal);
+			flipButtonUp.TouchUpInside += delegate {
+				flipView.Flip (FlipDirection.Up, null);
+			};
+			
+			viewController.View.AddSubview (flipView);
+			viewController.View.AddSubview (flipButtonDown);
+			viewController.View.AddSubview (flipButtonUp);
 			
 			return true;
 		}

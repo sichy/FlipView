@@ -19,7 +19,7 @@ namespace FlipView
 		private GradientLayer topFaceLayer;
 		private GradientLayer bottomFaceLayer;
 		private DoubleSidedLayer mainFlipLayer;
-		private CALayer flipLayer;
+		private CALayer projectionLayer;
 		private UIView frontView;
 		private UIImage frontImage;
     	private UIImage backImage;
@@ -73,39 +73,38 @@ namespace FlipView
 			
     		flippingInProgress = true;
     
-    		this.flipLayer = CALayer.Create ();
-    		flipLayer.Frame = this.Layer.Bounds;
+    		projectionLayer = CALayer.Create (); // this is to make the perspective and 2.5D effect
+    		projectionLayer.Frame = this.Layer.Bounds;
     
     		var perspective = CATransform3D.Identity;
-    		float zDistanse = 350f;
-    		perspective.m34 = 1f / -zDistanse;
-    		flipLayer.SublayerTransform = perspective;
+    		float zDistanse = 350f; // change this to the actual perspective and distance of the projection plane
+    		perspective.m34 = 1f / -zDistanse; 
+    		projectionLayer.SublayerTransform = perspective;
     
-    		this.Layer.AddSublayer (flipLayer);
+    		this.Layer.AddSublayer (projectionLayer);
     
     		frontImage = FrontView.GetImage ();
     		backImage = BackView.GetImage ();
     
-		    // Face layers
-		    // Top
 		    topFaceLayer = new GradientLayer (GradientLayerType.Face, GradientLayerAreaType.Top);
-		    topFaceLayer.Frame = new RectangleF (0f, 0f, flipLayer.Frame.Size.Width, (float)Math.Floor (flipLayer.Frame.Size.Height/2f));
+		    topFaceLayer.Frame = new RectangleF (0f, 0f, projectionLayer.Frame.Size.Width, (float)Math.Floor (projectionLayer.Frame.Size.Height/2f));
 		    
-		    // Bottom
 		    bottomFaceLayer = new GradientLayer (GradientLayerType.Face, GradientLayerAreaType.Bottom);
-		    bottomFaceLayer.Frame = new RectangleF (0f, (float)Math.Floor (flipLayer.Frame.Size.Height / 2), flipLayer.Frame.Size.Width, (float)Math.Floor (flipLayer.Frame.Size.Height/2));
+		    bottomFaceLayer.Frame = new RectangleF (0f, (float)Math.Floor (projectionLayer.Frame.Size.Height / 2f), projectionLayer.Frame.Size.Width, (float)Math.Floor (projectionLayer.Frame.Size.Height/2f));
 		
-		    // Flip layer
 		    mainFlipLayer = new DoubleSidedLayer ();
 		    
 		    mainFlipLayer.AnchorPoint = new PointF (1f, 1f);
-		    mainFlipLayer.Frame = new RectangleF (0f, 0f, flipLayer.Frame.Size.Width, (float)Math.Floor (flipLayer.Frame.Size.Height/2));
+		    mainFlipLayer.Frame = new RectangleF (0f, 0f, projectionLayer.Frame.Size.Width, (float)Math.Floor (projectionLayer.Frame.Size.Height/2f));
 		    mainFlipLayer.ZPosition = 1f;
 		    
 		    mainFlipLayer.FrontLayer = new GradientLayer (GradientLayerType.Flip, GradientLayerAreaType.Top);
 		    mainFlipLayer.BackLayer = new GradientLayer (GradientLayerType.Flip, GradientLayerAreaType.Bottom);
+				
+			// offscreen rendering optimization to reuse the offscreen buffer
+			topFaceLayer.ShouldRasterize = true;
+			bottomFaceLayer.ShouldRasterize = true;
 		    
-		    // Images
 		    if (direction == FlipDirection.Down) 
 			{
 		        topFaceLayer.Contents = backImage.CGImage;
@@ -129,34 +128,36 @@ namespace FlipView
 		        mainFlipLayer.Transform = CATransform3D.MakeRotation ((float)-Math.PI, 1f, 0f, 0f);
 		    }
 		
-		    // Add layers
-		    flipLayer.AddSublayer (topFaceLayer);
-		    flipLayer.AddSublayer (bottomFaceLayer);
-		    flipLayer.AddSublayer (mainFlipLayer);				
+		    // Add layers to the projection layer, so we apply the projections to it
+		    projectionLayer.AddSublayer (topFaceLayer);
+		    projectionLayer.AddSublayer (bottomFaceLayer);
+		    projectionLayer.AddSublayer (mainFlipLayer);				
 		    
 			NSTimer.CreateScheduledTimer (0.01, delegate {
-				this.InvokeOnMainThread (delegate {
-					CATransaction.Begin ();
-					CATransaction.AnimationDuration = Duration;
-					CATransaction.AnimationTimingFunction = CAMediaTimingFunction.FromName (CAMediaTimingFunction.EaseOut);
-					CATransaction.CompletionBlock = delegate {
-						fv = this.FrontView;
-			            FrontView = BackView;
-			            BackView = fv;
-						flippingInProgress = false;
-					};
-			
-			        float angle = (float)Math.PI * 1f - (float)direction;
-	        		mainFlipLayer.Transform = CATransform3D.MakeRotation (angle, 1f, 0f, 0f);
-	        
-	        		topFaceLayer.GradientOpacity = (float)direction;
-	        		bottomFaceLayer.GradientOpacity = 1f - (float)direction;
-	        
-	        		mainFlipLayer.FrontLayer.GradientOpacity = 1f - (float)direction;
-	        		mainFlipLayer.BackLayer.GradientOpacity = (float)direction;
-	        
-	        		CATransaction.Commit ();
-				});
+				CATransaction.Begin ();
+				CATransaction.AnimationDuration = Duration;
+				CATransaction.AnimationTimingFunction = CAMediaTimingFunction.FromName (CAMediaTimingFunction.EaseOut);
+				CATransaction.CompletionBlock = delegate {
+					fv = this.FrontView;
+		            FrontView = BackView;
+		            BackView = fv;
+					flippingInProgress = false;
+					
+					if (completion != null)
+						completion.Invoke ();
+				};
+		
+				// this is the whole trick, change the angle in timing function
+		        float angle = (float)Math.PI * (1f - (float)direction);
+        		mainFlipLayer.Transform = CATransform3D.MakeRotation (angle, 1f, 0f, 0f);
+        
+        		topFaceLayer.GradientOpacity = (float)direction;
+        		bottomFaceLayer.GradientOpacity = 1f - (float)direction;
+        
+        		mainFlipLayer.FrontLayer.GradientOpacity = 1f - (float)direction;
+        		mainFlipLayer.BackLayer.GradientOpacity = (float)direction;
+        
+        		CATransaction.Commit ();
 			});
 		}
 	}
