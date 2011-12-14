@@ -1,4 +1,5 @@
-using MonoTouch.CoreAnimation;using System;
+using System;
+using MonoTouch.CoreAnimation;
 
 namespace FlipView
 {
@@ -23,10 +24,10 @@ namespace FlipView
 		
 		#region properties
 		
-		private CALayer _frontLayer;
-		private CALayer _backLayer;
+		private GradientLayer _frontLayer;
+		private GradientLayer _backLayer;
 		
-		public CALayer FrontLayer 
+		public GradientLayer FrontLayer 
 		{ 
 			get
 			{
@@ -53,7 +54,7 @@ namespace FlipView
 			}
 		}
 		
-		public CALayer BackLayer 
+		public GradientLayer BackLayer 
 		{ 
 			get
 			{

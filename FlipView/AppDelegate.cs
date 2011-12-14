@@ -17,7 +17,7 @@ namespace FlipView
 		UIWindow window;
 		FlipViewViewController viewController;
 		
-		TickerView tickerView;
+		FlipView tickerView;
 		UIView frontView;
 		UIView backView;
 		UIButton flipButton;
@@ -44,7 +44,7 @@ namespace FlipView
 			backView = new UIView (new RectangleF (0, 0, 300, 300));
 			backView.BackgroundColor = UIColor.Gray;
 			
-			tickerView = new TickerView (new RectangleF (10, 50, 300, 300));
+			tickerView = new FlipView (new RectangleF (10, 50, 300, 300));
 			tickerView.FrontView = frontView;
 			tickerView.BackView = backView;	
 			tickerView.Duration = 1;
@@ -52,7 +52,7 @@ namespace FlipView
 			flipButton = new UIButton (new RectangleF (10, 10, 80, 40));
 			flipButton.SetTitle ("Flip", UIControlState.Normal);
 			flipButton.TouchUpInside += delegate {
-				tickerView.Flip (TickerViewTickDirection.Down, null);
+				tickerView.Flip (FlipDirection.Down, null);
 			};
 			
 			viewController.View.AddSubview (tickerView);

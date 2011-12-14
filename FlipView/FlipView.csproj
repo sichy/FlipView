@@ -73,8 +73,8 @@
     </Compile>
     <Compile Include="Controls\UIView+Extensions.cs" />
     <Compile Include="Controls\DoubleSidedLayer.cs" />
-    <Compile Include="Controls\GradientOverlayLayer.cs" />
-    <Compile Include="Controls\TickerView.cs" />
+    <Compile Include="Controls\GradientLayer.cs" />
+    <Compile Include="Controls\FlipView.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="FlipViewViewController.xib" />
