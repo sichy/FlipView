@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlipView", "FlipView\FlipView.csproj", "{CEEE8551-5DB0-4582-857D-4FE3A74AC0AC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|iPhoneSimulator = Debug|iPhoneSimulator
+		Release|iPhoneSimulator = Release|iPhoneSimulator
+		Debug|iPhone = Debug|iPhone
+		Release|iPhone = Release|iPhone
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CEEE8551-5DB0-4582-857D-4FE3A74AC0AC}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{CEEE8551-5DB0-4582-857D-4FE3A74AC0AC}.Debug|iPhone.Build.0 = Debug|iPhone
+		{CEEE8551-5DB0-4582-857D-4FE3A74AC0AC}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{CEEE8551-5DB0-4582-857D-4FE3A74AC0AC}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{CEEE8551-5DB0-4582-857D-4FE3A74AC0AC}.Release|iPhone.ActiveCfg = Release|iPhone
+		{CEEE8551-5DB0-4582-857D-4FE3A74AC0AC}.Release|iPhone.Build.0 = Release|iPhone
+		{CEEE8551-5DB0-4582-857D-4FE3A74AC0AC}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{CEEE8551-5DB0-4582-857D-4FE3A74AC0AC}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = FlipView\FlipView.csproj
+	EndGlobalSection
+EndGlobal
